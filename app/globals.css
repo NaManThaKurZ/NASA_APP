@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+:root {
+  --font-sans: -apple-system, "Segoe UI", "IBM Plex Sans", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+body {
+  font-family: var(--font-mono);
+}
+
+@theme inline {
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
