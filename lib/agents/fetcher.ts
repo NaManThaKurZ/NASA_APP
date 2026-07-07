@@ -1,4 +1,5 @@
 import { fetchEonetEvents } from "../nasa-api";
+import { getSampleEvents } from "../sample-events";
 import type { FetchResult, AgentLogEntry } from "../types";
 
 export async function runFetcherAgent(
@@ -14,7 +15,7 @@ export async function runFetcherAgent(
       timestamp: new Date().toISOString(),
       detail: `fetched ${events.length} open events from EONET`,
     });
-    return { source: "EONET", fetchedAt: new Date().toISOString(), events };
+    return { source: "EONET", fetchedAt: new Date().toISOString(), events, degraded: false };
   } catch (err) {
     log({
       agent: "fetcher",
@@ -22,6 +23,20 @@ export async function runFetcherAgent(
       timestamp: new Date().toISOString(),
       error: (err as Error).message,
     });
-    return { source: "EONET", fetchedAt: new Date().toISOString(), events: [] };
+
+    const events = getSampleEvents();
+    log({
+      agent: "fetcher",
+      action: "fallback",
+      timestamp: new Date().toISOString(),
+      detail: `EONET unreachable — loaded ${events.length} embedded sample events so downstream agents still have data to analyze`,
+    });
+
+    return {
+      source: "sample-fallback",
+      fetchedAt: new Date().toISOString(),
+      events,
+      degraded: true,
+    };
   }
 }

@@ -56,11 +56,37 @@ export interface Report {
 }
 
 export interface AgentLogEntry {
-  agent: "fetcher" | "analyst" | "reporter";
+  agent: "fetcher" | "analyst" | "critic" | "reporter";
   action: "start" | "success" | "failure" | "fallback";
   timestamp: string;
   detail?: string;
   error?: string;
+}
+
+export interface CritiquePoint {
+  id: string;
+  findingIndex: number; // index into the original Finding[] array
+  challenge: string; // the critic's specific objection
+  severity: "minor" | "moderate" | "major";
+  category: "sample_size" | "confounder" | "statistical_rigor" | "causal_overreach" | "other";
+}
+
+export interface CritiqueResult {
+  points: CritiquePoint[];
+  overallAssessment: string;
+}
+
+export interface RevisionEntry {
+  critiquePointId: string;
+  resolution: "conceded" | "defended" | "revised";
+  analystResponse: string;
+  updatedFinding?: Finding; // only present if resolution === "revised"
+}
+
+export interface DebateResult {
+  critique: CritiqueResult;
+  revisions: RevisionEntry[];
+  finalFindings: Finding[];
 }
 
 export interface PipelineResult {
@@ -68,4 +94,5 @@ export interface PipelineResult {
   analystResult: AnalystResult;
   report: Report;
   logs: AgentLogEntry[];
+  debateResult: DebateResult;
 }
